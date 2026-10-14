@@ -6,3 +6,5 @@ dialog{border:2px solid #384859;border-radius:23px;width:min(520px,calc(100% - 2
 @media(max-width:360px){.page{padding-inline:13px}.brand-mark{width:85px;height:75px}.portrait-sticker{width:65px;height:65px}.speaker-sticker{width:40px;height:46px}.logo-star{right:1px;font-size:19px}.identity{gap:10px}.identity h1{font-size:21px}.identity p{font-size:10px}.site-header .button{padding:7px 8px;font-size:11px}.workspace-heading h2{font-size:23px}.section-toolbar h3{font-size:16px}.rule-name{font-size:14px}.rule-card{padding:17px 13px}.reorder-buttons{gap:1px}.icon-button{width:26px}.keywords{gap:6px}.keyword{font-size:11px}.text-button{font-size:12px}.repeat-tag{font-size:10px}.count{padding:4px 7px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .portrait-sticker.no-photo::after{content:"妞";display:grid;place-items:center;height:100%;font-size:35px;font-weight:800;color:#a4613d}
+.search-field:focus-within{border-color:#5bafb5;background:#fffefa}
+.search-field input:focus,.search-field input:focus-visible{outline:none;outline-offset:0;box-shadow:none}
