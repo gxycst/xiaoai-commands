@@ -33,8 +33,8 @@ MAX_BYTES = 2 * 1024 * 1024
 SESSION_TTL = 8 * 60 * 60
 COOKIE_NAME = "xiaoai_session"
 DEFAULT_NETWORKS = "127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,::1/128,fc00::/7,fe80::/10"
-STATIC_FILES = {"/": "index.html", "/index.html": "index.html", "/style.css": "style.css", "/app.js": "app.js"}
-STATIC_TYPES = {"index.html": "text/html", "style.css": "text/css", "app.js": "application/javascript"}
+STATIC_FILES = {"/": "index.html", "/index.html": "index.html", "/style.css": "style.css", "/app.js": "app.js", "/speaker.svg": "speaker.svg"}
+STATIC_TYPES = {"index.html": "text/html", "style.css": "text/css", "app.js": "application/javascript", "speaker.svg": "image/svg+xml"}
 
 
 class APIError(Exception):
@@ -173,6 +173,26 @@ class CommandsStore:
         with self.locked() as directory_fd:
             raw, rules, _ = self._read(directory_fd)
             return {"rules": rules, "version": digest(raw)}
+
+    def read_portrait(self):
+        with self.locked() as directory_fd:
+            name = self._path("niuniu.png", directory_fd)
+            kwargs = {"dir_fd": directory_fd} if directory_fd is not None else {}
+            try:
+                info = os.stat(name, follow_symlinks=False, **kwargs)
+                if not stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode):
+                    raise APIError(404, "人物图片必须是实际 PNG 文件")
+                fd = os.open(name, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0), **kwargs)
+                with os.fdopen(fd, "rb") as source:
+                    opened = os.fstat(source.fileno())
+                    if not stat.S_ISREG(opened.st_mode) or (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino):
+                        raise APIError(409, "人物图片已变化")
+                    content = source.read(8 * 1024 * 1024 + 1)
+            except FileNotFoundError as exc:
+                raise APIError(404, "请将私人抠图放到 skills/niuniu.png") from exc
+            if len(content) > 8 * 1024 * 1024 or not content.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise APIError(422, "人物图片必须是小于 8 MiB 的 PNG")
+            return content
 
     def _backup_directory(self, directory_fd):
         name = self._path(".commands-backups", directory_fd)
@@ -449,6 +469,10 @@ class Handler(BaseHTTPRequestHandler):
         self._guard()
         path = urlsplit(self.path).path
         if self.command == "GET":
+            if path == "/niuniu.png":
+                # Private family image stays in the existing NAS bind mount.
+                self._send(200, self.app.store.read_portrait(), "image/png")
+                return
             if path in STATIC_FILES:
                 target = self.app.static_directory / STATIC_FILES[path]
                 try:
@@ -456,7 +480,7 @@ class Handler(BaseHTTPRequestHandler):
                 except OSError as exc:
                     raise APIError(404, "页面文件不存在，请检查应用文件是否完整") from exc
                 content_type = STATIC_TYPES[target.name]
-                self._send(200, content, content_type + "; charset=utf-8")
+                self._send(200, content, content_type if content_type.startswith("image/") else content_type + "; charset=utf-8")
             elif path == "/api/session":
                 _, session = self.app.session(self.headers.get("Cookie"))
                 self._json(200, {"authenticated": session is not None, **({"csrfToken": session["csrfToken"]} if session else {})})

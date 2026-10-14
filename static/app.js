@@ -2,6 +2,8 @@
 
 (() => {
   const $ = (id) => document.getElementById(id);
+  const portrait = document.querySelector(".portrait-sticker img");
+  if (portrait) portrait.addEventListener("error", () => { portrait.hidden = true; portrait.parentElement.classList.add("no-photo"); });
   const state = { authenticated: false, csrfToken: "", rules: null, version: null, dirty: false, conflict: false, readError: false, saving: false, loading: false, testing: false, loginBusy: false, editingIndex: null, revision: 0 };
   const nodes = {};
   ["login-panel", "app-panel", "initial-status", "logout-button", "password", "login-button", "login-error", "login-description", "rules-list", "rule-count", "search-input", "search-summary", "add-button", "save-button", "reload-button", "draft-status", "backup-status", "app-notice", "conflict-panel", "test-button", "test-source", "test-result", "test-query", "edit-dialog", "edit-title", "rule-name", "rule-keywords", "rule-reply", "rule-repeat", "edit-error"].forEach((id) => { nodes[id] = $(id); });

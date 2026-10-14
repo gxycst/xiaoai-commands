@@ -1,4 +1,28 @@
-# 小爱亲子词库管理
+# 妞妞和小爱
+
+## 儿童版更新与私人 Logo
+
+页面现为儿童贴纸风格，标题「妞妞和小爱」，人物抠图配可爱小音箱。**真实照片不上传本公开仓库、不放进管理器镜像**。
+
+把单独交付的透明 PNG 保存到 NAS：
+
+```text
+/volume2/ssd_docker/xiaogpt/config/skills/niuniu.png
+```
+
+它沿用已有 skills 挂载，仅供家庭局域网页面显示。尚未放入照片时会显示「妞」字贴纸；缺图不会阻止登录或管理词库。Git 更新、容器重建都不会覆盖该照片或 commands.json。
+
+已有安装，在 NAS 的项目目录执行（不需要宿主机 Git）：
+
+```sh
+cd /volume2/ssd_docker/xiaoai-commands
+docker run --rm -v "$PWD:/repo" -w /repo alpine/git pull --ff-only
+docker compose up -d --build --pull never
+```
+
+保留 `.env` 和你已改成 `python:3.11-slim` 的 Dockerfile。本次更新不改 Dockerfile，因此正常 pull 不会冲突。若提示冲突，先保留现场并查看报错，不要强制覆盖。更新后刷新页面；手机有旧缓存时重新打开页面。
+
+---
 
 原生 HTML/CSS/JS + Python 标准库，无 npm、无 pip、无数据库。独立运行一个管理容器，**不用改 xiaogpt.py，不用重建 xiaogpt，也不会自动创建或导入示例词库**。
 

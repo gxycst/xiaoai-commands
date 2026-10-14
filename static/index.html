@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#f6f6ef">
-  <title>小爱亲子词库</title>
-  <link rel="icon" href="data:,">
+  <meta name="theme-color" content="#fff6df">
+  <title>妞妞和小爱</title>
+  <link rel="icon" type="image/svg+xml" href="/speaker.svg">
   <link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
   <div class="page">
     <header class="site-header">
-      <div class="identity"><span class="brand-mark" aria-hidden="true">小爱</span><div><h1>小爱亲子词库</h1><p>把孩子的话，变成熟悉的回应。</p></div></div>
+      <div class="identity"><span class="brand-mark" aria-hidden="true"><span class="portrait-sticker"><img src="/niuniu.png" alt="" width="96" height="96"></span><img class="speaker-sticker" src="/speaker.svg" alt="" width="54" height="60"><span class="logo-star">✦</span></span><div><h1>妞妞<span>和</span>小爱</h1><p>我们的小小对话本</p></div></div>
       <button id="logout-button" class="button quiet" type="button" hidden>退出</button>
     </header>
 
     <section id="login-panel" class="login-panel" hidden aria-labelledby="login-title">
-      <div class="eyebrow">家庭局域网 · 词库管理</div>
-      <h2 id="login-title">欢迎回家</h2>
+      <div class="eyebrow">妞妞的对话本</div>
+      <h2 id="login-title">打开小本本</h2>
       <p id="login-description">输入管理密码，打开你的小爱词库。</p>
       <form id="login-form">
         <label for="password">管理密码</label>
@@ -32,7 +32,7 @@
 
     <main id="app-panel" hidden>
       <div class="workspace-heading">
-        <div><div class="eyebrow">亲子互动</div><h2>我们的互动词库 <span id="rule-count" class="count">0 条</span></h2><p class="file-note">commands.json <span class="dot" aria-hidden="true">·</span> 按规则顺序，关键词包含即命中</p></div>
+        <div><div class="eyebrow">✦ 今天想聊什么？</div><h2>妞妞的对话本 <span id="rule-count" class="count">0 条</span></h2><p class="file-note">小爱听到关键词，就会说对应的话。</p></div>
         <div class="top-actions"><button id="reload-button" class="button quiet" type="button">重新读取</button><button id="save-button" class="button primary" type="button" disabled>保存词库</button></div>
       </div>
       <div class="save-state"><span id="draft-status" class="state-pill">正在读取</span><span id="backup-status" class="subtle"></span></div>
@@ -45,13 +45,13 @@
 
       <div class="workspace-grid">
         <section class="rules-section" aria-labelledby="rules-title">
-          <div class="section-toolbar"><h3 id="rules-title">互动规则</h3><button id="add-button" class="button small primary" type="button" disabled><span aria-hidden="true">＋</span> 添加规则</button></div>
+          <div class="section-toolbar"><h3 id="rules-title">一句一句，记下来</h3><button id="add-button" class="button small primary" type="button" disabled><span aria-hidden="true">＋</span> 添加规则</button></div>
           <label class="search-field"><span class="sr-only">搜索规则、关键词或回复</span><span aria-hidden="true" class="search-icon">⌕</span><input id="search-input" type="search" placeholder="搜索规则、关键词或回复" autocomplete="off"></label>
           <p id="search-summary" class="search-summary" hidden></p>
           <div id="rules-list" class="rules-list" aria-live="polite"></div>
         </section>
         <aside class="test-panel" aria-labelledby="test-title">
-          <div class="eyebrow">先试一句</div><h3 id="test-title">命中测试</h3>
+          <img class="test-speaker" src="/speaker.svg" alt="" width="54" height="60"><div class="eyebrow">小爱，听听看！</div><h3 id="test-title">试说一句</h3>
           <p class="test-description">粘贴小爱识别出来的话，看看会触发哪条规则。</p>
           <form id="test-form"><label for="test-query">小爱识别的内容</label><textarea id="test-query" name="query" rows="3" placeholder="例如：妞妞摔倒了" required></textarea><button id="test-button" class="button primary full-width" type="submit" disabled>测试命中 <span aria-hidden="true">→</span></button></form>
           <p id="test-source" class="test-source">使用已保存的词库</p>
@@ -71,7 +71,7 @@
         <label for="rule-name">规则名称</label><input id="rule-name" name="name" type="text" placeholder="例如：妞妞摔倒互动" required>
         <label for="rule-keywords">触发关键词 <span>每行一个</span></label><textarea id="rule-keywords" name="keywords" rows="5" placeholder="妞妞摔倒&#10;妞妞跌倒&#10;妞妞摔到了" required></textarea><p class="field-hint">小爱听错的词，也可以加在这里。</p>
         <label for="rule-reply">小爱的回复</label><textarea id="rule-reply" name="reply" rows="3" placeholder="例如：陶妞妞摔倒了" required></textarea>
-        <div class="repeat-field"><div><label for="rule-repeat">重复次数</label><p class="field-hint">reply 会重复这个次数</p></div><input id="rule-repeat" name="repeat" type="number" min="1" step="1" inputmode="numeric" value="1" required></div>
+        <div class="repeat-field"><div><label for="rule-repeat">重复次数</label><p class="field-hint">这句话让小爱说几遍</p></div><input id="rule-repeat" name="repeat" type="number" min="1" step="1" inputmode="numeric" value="1" required></div>
         <p id="edit-error" class="error-text" role="alert" hidden></p>
       </div>
       <div class="dialog-actions"><button id="cancel-dialog-button" class="button quiet" type="button">取消</button><button class="button primary" type="submit">完成编辑</button></div>
