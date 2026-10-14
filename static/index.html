@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f6f6ef">
+  <title>小爱亲子词库</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <div class="identity"><span class="brand-mark" aria-hidden="true">小爱</span><div><h1>小爱亲子词库</h1><p>把孩子的话，变成熟悉的回应。</p></div></div>
+      <button id="logout-button" class="button quiet" type="button" hidden>退出</button>
+    </header>
+
+    <section id="login-panel" class="login-panel" hidden aria-labelledby="login-title">
+      <div class="eyebrow">家庭局域网 · 词库管理</div>
+      <h2 id="login-title">欢迎回家</h2>
+      <p id="login-description">输入管理密码，打开你的小爱词库。</p>
+      <form id="login-form">
+        <label for="password">管理密码</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button id="login-button" class="button primary" type="submit">进入词库 <span aria-hidden="true">→</span></button>
+      </form>
+      <p id="login-error" class="error-text" role="alert" hidden></p>
+      <p class="small-print">密码是部署时生成或填写的管理密码。</p>
+    </section>
+
+    <main id="app-panel" hidden>
+      <div class="workspace-heading">
+        <div><div class="eyebrow">亲子互动</div><h2>我们的互动词库 <span id="rule-count" class="count">0 条</span></h2><p class="file-note">commands.json <span class="dot" aria-hidden="true">·</span> 按规则顺序，关键词包含即命中</p></div>
+        <div class="top-actions"><button id="reload-button" class="button quiet" type="button">重新读取</button><button id="save-button" class="button primary" type="button" disabled>保存词库</button></div>
+      </div>
+      <div class="save-state"><span id="draft-status" class="state-pill">正在读取</span><span id="backup-status" class="subtle"></span></div>
+
+      <div id="app-notice" class="notice" role="status" hidden></div>
+      <div id="conflict-panel" class="notice warning" role="alert" hidden>
+        <div><strong>文件已被其他人修改</strong><p>当前修改仍保留在页面。重新读取会放弃这些修改，请先记下需要保留的内容。</p></div>
+        <button id="conflict-reload-button" class="button" type="button">重新读取文件</button>
+      </div>
+
+      <div class="workspace-grid">
+        <section class="rules-section" aria-labelledby="rules-title">
+          <div class="section-toolbar"><h3 id="rules-title">互动规则</h3><button id="add-button" class="button small primary" type="button" disabled><span aria-hidden="true">＋</span> 添加规则</button></div>
+          <label class="search-field"><span class="sr-only">搜索规则、关键词或回复</span><span aria-hidden="true" class="search-icon">⌕</span><input id="search-input" type="search" placeholder="搜索规则、关键词或回复" autocomplete="off"></label>
+          <p id="search-summary" class="search-summary" hidden></p>
+          <div id="rules-list" class="rules-list" aria-live="polite"></div>
+        </section>
+        <aside class="test-panel" aria-labelledby="test-title">
+          <div class="eyebrow">先试一句</div><h3 id="test-title">命中测试</h3>
+          <p class="test-description">粘贴小爱识别出来的话，看看会触发哪条规则。</p>
+          <form id="test-form"><label for="test-query">小爱识别的内容</label><textarea id="test-query" name="query" rows="3" placeholder="例如：妞妞摔倒了" required></textarea><button id="test-button" class="button primary full-width" type="submit" disabled>测试命中 <span aria-hidden="true">→</span></button></form>
+          <p id="test-source" class="test-source">使用已保存的词库</p>
+          <div id="test-result" class="test-result" role="status" hidden></div>
+          <div class="matching-note"><span aria-hidden="true">↳</span><p>从第一条规则开始扫描；大小写敏感，不会自动忽略空格。第一个命中就会返回。</p></div>
+        </aside>
+      </div>
+      <footer class="workspace-footer"><span class="footer-dot" aria-hidden="true"></span> 保存后，小爱下次处理指令时会读取新词库。</footer>
+    </main>
+    <div id="initial-status" class="initial-status" role="status">正在连接词库…</div>
+  </div>
+
+  <dialog id="edit-dialog" aria-labelledby="edit-title">
+    <form id="edit-form">
+      <div class="dialog-heading"><div><div class="eyebrow">规则设置</div><h2 id="edit-title">添加规则</h2></div><button id="close-dialog-button" class="icon-button" type="button" aria-label="关闭编辑窗口">×</button></div>
+      <div class="dialog-body">
+        <label for="rule-name">规则名称</label><input id="rule-name" name="name" type="text" placeholder="例如：妞妞摔倒互动" required>
+        <label for="rule-keywords">触发关键词 <span>每行一个</span></label><textarea id="rule-keywords" name="keywords" rows="5" placeholder="妞妞摔倒&#10;妞妞跌倒&#10;妞妞摔到了" required></textarea><p class="field-hint">小爱听错的词，也可以加在这里。</p>
+        <label for="rule-reply">小爱的回复</label><textarea id="rule-reply" name="reply" rows="3" placeholder="例如：陶妞妞摔倒了" required></textarea>
+        <div class="repeat-field"><div><label for="rule-repeat">重复次数</label><p class="field-hint">reply 会重复这个次数</p></div><input id="rule-repeat" name="repeat" type="number" min="1" step="1" inputmode="numeric" value="1" required></div>
+        <p id="edit-error" class="error-text" role="alert" hidden></p>
+      </div>
+      <div class="dialog-actions"><button id="cancel-dialog-button" class="button quiet" type="button">取消</button><button class="button primary" type="submit">完成编辑</button></div>
+    </form>
+  </dialog>
+  <noscript><p class="notice">请启用浏览器的 JavaScript 后使用词库管理。</p></noscript>
+</body>
+</html>

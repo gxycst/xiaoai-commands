@@ -1,0 +1,10 @@
+.env
+.git
+__pycache__
+*.pyc
+tests
+README.md
+SELFTEST.md
+configure.sh
+example.commands.json
+preview-*.jpg
